@@ -1,2 +1,2 @@
 # iphone-calculator
-Dành cho những người muốn dùng thử calculator trên iphone
+Dành cho người muốn dùng thử calculator trên iphone
