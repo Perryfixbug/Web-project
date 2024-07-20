@@ -1,21 +1,23 @@
-let ok = 0;
+let clearAll = false;
+let fullScreen = false
 
 function display(key){
-    ok = 0;
+    clearAll = false;
     const val = document.getElementById("screen");
-    if(val.value != '0'){
+    if(val.value != '0' || key == '.'){
         document.getElementById("screen").value += key; 
     }else{
         clearScreen();
         document.getElementById("screen").value += key;
         document.getElementById("button_AC").innerHTML = "C";
     }
+    resize();
 }
 
 function eraseLastKey(){
-    if(ok == 1){
+    if(clearAll){
         document.getElementById("screen").value = "0";
-        ok = 0;
+        clearAll = false;
     }else{
         const screen = document.getElementById("screen");
         screen.value = screen.value.slice(0,-1);
@@ -24,17 +26,15 @@ function eraseLastKey(){
             screen.value = '0';
         }
     }
+    resize();
 }
 
 function calculate(){
-    ok = 1;
+    clearAll = true;
     const x = document.getElementById("screen").value;
     let y = eval(x);
-    if(y){
-        document.getElementById("screen").value = y;
-    }else{          //dang ko hoat dong
-        document.getElementById("screen").value = "err..."
-    }
+    document.getElementById("screen").value = y;   
+    resize();
     return y;
 }
 
@@ -46,9 +46,10 @@ function display1(){    //tinh +/-
     const val = document.getElementById("screen");
     if(val.value.charAt(0) == '-'){
         val.value = val.value.slice(1);
-    }else if(val.value.charAt(0) != '0'){
+    }else if(val.value != '0'){
         val.value = '-' + val.value;
     }
+    resize();
 }
 
 //xử lí giữ nút AC (đang ko hoạt động)
@@ -57,7 +58,7 @@ function display1(){    //tinh +/-
     let mouseTimer;
     function mouseDown() { 
         mouseUp();
-        mouseTimer = setTimeout(execMouseDown,700); //set timeout to fire in 0.5 seconds when the user presses mouse button down
+        mouseTimer = setTimeout(execMouseDown,700); //set timeout to fire in 0.7 seconds when the user presses mouse button down
     }
   
     function mouseUp() { 
@@ -67,23 +68,41 @@ function display1(){    //tinh +/-
     function execMouseDown() { 
         // clearScreen();
         document.getElementById("screen").value = "0";
+        resize();
         // document.getElementById("button_AC").innerHTML = "AC";
     }
   
     const button = document.getElementById("button_AC");
     button.addEventListener("mousedown", mouseDown);
     document.body.addEventListener("mouseup", mouseUp);  //listen for mouse up event on body, not just the element you originally clicked on 
+    
   }());
 
 
 function display2(){        //tinh %
-    ok = 1;
+    clearAll = true;
     const val = document.getElementById("screen");
     let len = val.value.length;
-    let i = len - 1;
-    while(val.value.charAt(i) >= '0' && val.value.charAt(i) <= '9'){
-        i--;
+    let index = len - 1;
+    while(val.value.charAt(index) >= '0' && val.value.charAt(index) <= '9' || val.value.charAt(index) == '.'){
+        index--;
     }
-    let y = eval(val.value.slice(i+1, len) + '/100');
-    val.value = val.value.slice(0, i+1) + y;
+    let y = eval(val.value.slice(index+1, len) + '/100');
+    val.value = val.value.slice(0, index+1) + y;
+    resize();
 }
+
+function resize(){
+    const screen = document.getElementById("screen");
+    let len = screen.value.length;
+    if(len > 6 && len <= 8){
+        screen.style.fontSize = "4rem";
+    }else if(len > 8 && len <= 10){
+        screen.style.fontSize = "3rem";
+    }else if(len > 10){
+        screen.style.fontSize = "2.2rem";
+    }else{
+        screen.style.fontSize = '5rem';
+    }
+}
+
